@@ -8,7 +8,7 @@ By example:
 
 ```purescript
 import Node.ReadLine (READLINE)
-import Node.SimpleRepl (setPrompt, close, readLine, runRepl, putStrLn)
+import Node.SimpleRepl (setPrompt, readLine, runRepl, putStrLn)
 
 main :: forall e. Eff (console :: CONSOLE, readline :: READLINE | e) Unit
 main = runRepl do
@@ -20,8 +20,8 @@ main = runRepl do
     loop = do
       res <- readLine
       case res of
-           ":q" -> close
-           ":Q" -> close
+           ":q" -> pure unit
+           ":Q" -> pure unit
            _ -> do
              putStrLn $ toUpper res <> "!!!"
              loop

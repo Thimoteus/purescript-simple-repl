@@ -2,7 +2,6 @@ module Node.SimpleRepl
   ( Repl
   , runRepl
   , setPrompt
-  , close
   , readLine
   , putStrLn
   ) where
@@ -41,7 +40,7 @@ readLine :: forall e. Repl e String
 readLine = prompt *> setLineHandler
 
 runRepl :: forall e. Repl e Unit -> Eff (console :: CONSOLE, readline :: READLINE | e) Unit
-runRepl comp = runAff (error <<< message) pure $ runReaderT comp =<< RLA.simpleInterface
+runRepl comp = runAff (error <<< message) pure $ runReaderT (comp *> close) =<< RLA.simpleInterface
 
 putStrLn :: forall e. String -> Repl e Unit
 putStrLn = liftAff <<< log
