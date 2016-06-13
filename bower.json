@@ -16,8 +16,11 @@
     "url": "git://github.com/Thimoteus/purescript-simple-repl.git"
   },
   "dependencies": {
-    "purescript-console": "^0.1.0",
-    "purescript-aff": "^0.16.1",
-    "purescript-node-readline": "^0.5.0"
+    "purescript-console": "^1.0.0",
+    "purescript-aff": "^1.0.0",
+    "purescript-node-readline": "^1.0.0"
+  },
+  "devDependencies": {
+    "purescript-psci-support": "^1.0.0"
   }
 }
