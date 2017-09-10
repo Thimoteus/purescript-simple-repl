@@ -8,8 +8,6 @@ module Node.SimpleRepl
 
 import Prelude
 
-import Control.Apply ((*>))
-import Control.Bind ((=<<))
 import Control.Monad.Aff (Aff, runAff)
 import Control.Monad.Aff.Class (liftAff)
 import Control.Monad.Aff.Console (log)

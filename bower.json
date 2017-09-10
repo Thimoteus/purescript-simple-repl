@@ -1,6 +1,6 @@
 {
   "name": "purescript-simple-repl",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "license": "MIT",
   "moduleType": [
     "node"
@@ -16,11 +16,11 @@
     "url": "git://github.com/Thimoteus/purescript-simple-repl.git"
   },
   "dependencies": {
-    "purescript-console": "^1.0.0",
-    "purescript-aff": "^1.0.0",
-    "purescript-node-readline": "^1.0.0"
+    "purescript-console": "^3.0.0",
+    "purescript-aff": "^3.1.0",
+    "purescript-node-readline": "^3.1.0"
   },
   "devDependencies": {
-    "purescript-psci-support": "^1.0.0"
+    "purescript-psci-support": "^3.0.0"
   }
 }
