@@ -1,10 +1,4 @@
-module Node.SimpleRepl
-  ( Repl
-  , runRepl
-  , setPrompt
-  , readLine
-  , putStrLn
-  ) where
+module Node.SimpleRepl where
 
 import Prelude
 
