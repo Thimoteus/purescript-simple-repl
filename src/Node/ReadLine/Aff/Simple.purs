@@ -22,8 +22,11 @@ close = liftEff <<< RL.close
 setLineHandler :: forall e. RL.Interface -> Aff (readline :: RL.READLINE | e) String
 setLineHandler i = makeAff \ cb -> nonCanceler <$ RL.setLineHandler i (cb <<< Right)
 
-simpleInterface :: forall e. Aff (console :: CONSOLE, readline :: RL.READLINE | e) RL.Interface
-simpleInterface = liftEff effInterface
+completionInterface :: forall e. RL.Completer e -> Aff (console :: CONSOLE, readline :: RL.READLINE | e) RL.Interface
+completionInterface comp = liftEff effInterface
   where
-   effInterface = RL.createInterface stdin opts
-   opts = RL.output := stdout <> RL.completer := RL.noCompletion
+    effInterface = RL.createInterface stdin opts
+    opts = RL.output := stdout <> RL.completer := comp
+
+simpleInterface :: forall e. Aff (console :: CONSOLE, readline :: RL.READLINE | e) RL.Interface
+simpleInterface = completionInterface RL.noCompletion

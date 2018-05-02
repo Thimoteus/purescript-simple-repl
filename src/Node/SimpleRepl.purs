@@ -11,7 +11,7 @@ import Control.Monad.Eff.Exception (message)
 import Control.Monad.Reader.Class (ask)
 import Control.Monad.Reader.Trans (ReaderT, runReaderT)
 import Data.Either (either)
-import Node.ReadLine (Interface, READLINE)
+import Node.ReadLine (Interface, READLINE, Completer)
 import Node.ReadLine.Aff.Simple as RLA
 
 type Repl e a = ReaderT Interface (Aff (console :: CONSOLE, readline :: READLINE | e)) a
@@ -31,8 +31,22 @@ setLineHandler = liftAff <<< RLA.setLineHandler =<< ask
 readLine :: forall e. Repl e String
 readLine = prompt *> setLineHandler
 
-runRepl :: forall e. Repl e Unit -> Eff (console :: CONSOLE, readline :: READLINE | e) Unit
-runRepl rep = void $ runAff (either (error <<< message) pure) $ runReaderT (rep *> close) =<< RLA.simpleInterface
+simpleRepl :: forall e. Repl e Unit -> Eff (console :: CONSOLE, readline :: READLINE | e) Unit
+simpleRepl = runWithInterface RLA.simpleInterface
+
+completionRepl :: forall e. Completer e -> Repl e Unit -> Eff (console :: CONSOLE, readline :: READLINE | e) Unit
+completionRepl comp = runWithInterface (RLA.completionInterface comp)
+
+runWithInterface
+  :: forall e
+   . Aff (console :: CONSOLE, readline :: READLINE | e) Interface
+  -> Repl e Unit
+  -> Eff (console :: CONSOLE, readline :: READLINE | e) Unit
+runWithInterface int rep
+  = void
+  $ runAff (either (error <<< message) pure)
+  $ runReaderT (rep *> close)
+  =<< int
 
 putStrLn :: forall e. String -> Repl e Unit
 putStrLn = liftAff <<< log
