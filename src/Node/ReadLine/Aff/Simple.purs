@@ -2,31 +2,30 @@ module Node.ReadLine.Aff.Simple where
 
 import Prelude
 
-import Control.Monad.Aff (Aff, makeAff, nonCanceler)
-import Control.Monad.Eff.Class (liftEff)
-import Control.Monad.Eff.Console (CONSOLE)
+import Effect.Aff (Aff, makeAff, nonCanceler)
+import Effect.Class (liftEffect)
 import Data.Either (Either(..))
 import Data.Options ((:=))
 import Node.Process (stdin, stdout)
 import Node.ReadLine as RL
 
-prompt :: forall e. RL.Interface -> Aff (readline :: RL.READLINE | e) Unit
-prompt = liftEff <<< RL.prompt
+prompt :: RL.Interface -> Aff Unit
+prompt = liftEffect <<< RL.prompt
 
-setPrompt :: forall e. String -> Int -> RL.Interface -> Aff (readline :: RL.READLINE | e) Unit
-setPrompt s n = liftEff <<< RL.setPrompt s n
+setPrompt :: String -> Int -> RL.Interface -> Aff Unit
+setPrompt s n = liftEffect <<< RL.setPrompt s n
 
-close :: forall e. RL.Interface -> Aff (readline :: RL.READLINE |  e) Unit
-close = liftEff <<< RL.close
+close :: RL.Interface -> Aff Unit
+close = liftEffect <<< RL.close
 
-setLineHandler :: forall e. RL.Interface -> Aff (readline :: RL.READLINE | e) String
+setLineHandler :: RL.Interface -> Aff String
 setLineHandler i = makeAff \ cb -> nonCanceler <$ RL.setLineHandler i (cb <<< Right)
 
-completionInterface :: forall e. RL.Completer e -> Aff (console :: CONSOLE, readline :: RL.READLINE | e) RL.Interface
-completionInterface comp = liftEff effInterface
+completionInterface :: RL.Completer -> Aff RL.Interface
+completionInterface comp = liftEffect effInterface
   where
     effInterface = RL.createInterface stdin opts
     opts = RL.output := stdout <> RL.completer := comp
 
-simpleInterface :: forall e. Aff (console :: CONSOLE, readline :: RL.READLINE | e) RL.Interface
+simpleInterface :: Aff RL.Interface
 simpleInterface = completionInterface RL.noCompletion
