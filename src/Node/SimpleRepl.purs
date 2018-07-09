@@ -2,51 +2,41 @@ module Node.SimpleRepl where
 
 import Prelude
 
-import Control.Monad.Aff (Aff, runAff)
-import Control.Monad.Aff.Class (liftAff)
-import Control.Monad.Aff.Console (log)
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE, error)
-import Control.Monad.Eff.Exception (message)
-import Control.Monad.Reader.Class (ask)
-import Control.Monad.Reader.Trans (ReaderT, runReaderT)
+import Control.Monad.Reader (ReaderT, ask, runReaderT)
 import Data.Either (either)
-import Node.ReadLine (Interface, READLINE, Completer)
+import Effect.Exception (message)
+import Effect (Effect)
+import Effect.Aff (Aff, runAff_)
+import Effect.Aff.Class (liftAff)
+import Effect.Class.Console (error, log)
+import Node.ReadLine (Interface, Completer)
 import Node.ReadLine.Aff.Simple as RLA
 
-type Repl e a = ReaderT Interface (Aff (console :: CONSOLE, readline :: READLINE | e)) a
+type Repl a = ReaderT Interface Aff a
 
-prompt :: forall e. Repl e Unit
+prompt :: Repl Unit
 prompt = liftAff <<< RLA.prompt =<< ask
 
-setPrompt :: forall e. String -> Repl e Unit
+setPrompt :: String -> Repl Unit
 setPrompt s = liftAff <<< RLA.setPrompt s 0 =<< ask
 
-close :: forall e. Repl e Unit
+close :: Repl Unit
 close = liftAff <<< RLA.close =<< ask
 
-setLineHandler :: forall e. Repl e String
+setLineHandler :: Repl String
 setLineHandler = liftAff <<< RLA.setLineHandler =<< ask
 
-readLine :: forall e. Repl e String
+readLine :: Repl String
 readLine = prompt *> setLineHandler
 
-simpleRepl :: forall e. Repl e Unit -> Eff (console :: CONSOLE, readline :: READLINE | e) Unit
+simpleRepl :: Repl Unit -> Effect Unit
 simpleRepl = runWithInterface RLA.simpleInterface
 
-completionRepl :: forall e. Completer e -> Repl e Unit -> Eff (console :: CONSOLE, readline :: READLINE | e) Unit
-completionRepl comp = runWithInterface (RLA.completionInterface comp)
+completionRepl :: Completer -> Repl Unit -> Effect Unit
+completionRepl = runWithInterface <<< RLA.completionInterface
 
-runWithInterface
-  :: forall e
-   . Aff (console :: CONSOLE, readline :: READLINE | e) Interface
-  -> Repl e Unit
-  -> Eff (console :: CONSOLE, readline :: READLINE | e) Unit
-runWithInterface int rep
-  = void
-  $ runAff (either (error <<< message) pure)
-  $ runReaderT (rep *> close)
-  =<< int
+runWithInterface :: Aff Interface -> Repl Unit -> Effect Unit
+runWithInterface int rep = runAff_ (either (error <<< message) pure) $ runReaderT (rep *> close) =<< int
 
-putStrLn :: forall e. String -> Repl e Unit
-putStrLn = liftAff <<< log
+putStrLn :: String -> Repl Unit
+putStrLn = log

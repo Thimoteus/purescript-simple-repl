@@ -2,15 +2,13 @@ module Test.Main where
 
 import Prelude
 
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE)
 import Data.Array as A
 import Data.String (toUpper)
-import Data.String.CodePoints as S
-import Node.ReadLine (READLINE)
+import Data.String.CodeUnits as S
+import Effect (Effect)
 import Node.SimpleRepl (completionRepl, putStrLn, readLine, setPrompt)
 
-main :: forall e. Eff (console :: CONSOLE, readline :: READLINE | e) Unit
+main :: Effect Unit
 main = completionRepl comp do
   setPrompt "\x1b[32m>\x1b[0m "
   putStrLn "THE DRAMATIC REPL"
