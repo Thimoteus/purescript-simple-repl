@@ -36,7 +36,9 @@ completionRepl :: Completer -> Repl Unit -> Effect Unit
 completionRepl = runWithInterface <<< RLA.completionInterface
 
 runWithInterface :: Aff Interface -> Repl Unit -> Effect Unit
-runWithInterface int rep = runAff_ (either (error <<< message) pure) $ runReaderT (rep *> close) =<< int
+runWithInterface int rep
+  = runAff_ (either (error <<< message) pure) $
+    runReaderT (rep *> close) =<< int
 
 putStrLn :: String -> Repl Unit
 putStrLn = log

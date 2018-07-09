@@ -7,10 +7,9 @@
 By example:
 
 ```purescript
-import Node.ReadLine (READLINE)
 import Node.SimpleRepl (setPrompt, readLine, runRepl, putStrLn)
 
-main :: forall e. Eff (console :: CONSOLE, readline :: READLINE | e) Unit
+main :: Effect Unit
 main = runRepl do
   setPrompt "> "
   putStrLn "THE DRAMATIC REPL"
@@ -27,7 +26,7 @@ main = runRepl do
              loop
 ```
 
-The main draw of this library is the `readLine :: forall e. Repl e String`
+The main draw of this library is the `readLine :: Repl String`
 function.
 
 The point was to make it possible to do something akin to Haskell's
