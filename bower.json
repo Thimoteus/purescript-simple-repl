@@ -18,7 +18,7 @@
     "purescript-console": "^4.1.0",
     "purescript-aff": "^5.0.0",
     "purescript-node-readline": "^4.0.0",
-    "purescript-prelude": "4.0.0"
+    "purescript-prelude": "^4.0.0"
   },
   "devDependencies": {
     "purescript-psci-support": "^4.0.0"
